@@ -1,0 +1,7 @@
+node_modules/
+.fontconfig/
+.fontconfig-cache/
+uploads/banners/*
+!uploads/banners/.gitkeep
+uploads/rendered/*
+!uploads/rendered/.gitkeep

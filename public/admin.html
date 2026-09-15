@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Banner Studio — Admin</title>
+<link rel="icon" href="/favicon.png" type="image/png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Playfair+Display:wght@700&family=Lora:wght@700&family=Dancing+Script:wght@600&family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/admin.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <div>
+      <h1>Banner Studio</h1>
+      <p>Upload a banner, place the name, share the link.</p>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn is-active" data-tab="banners" role="tab" aria-selected="true">Banners</button>
+    <button class="tab-btn" data-tab="links" role="tab" aria-selected="false">Generated links</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ===================== BANNERS TAB ===================== -->
+  <section id="tab-banners" class="tab-panel is-active">
+    <div class="layout">
+
+      <!-- Library sidebar -->
+      <aside class="library">
+        <div class="library-head">
+          <h2>Library</h2>
+        </div>
+
+        <form id="uploadForm" class="upload-card">
+          <label class="upload-drop" for="fileInput">
+            <input id="fileInput" name="image" type="file" accept="image/png,image/jpeg,image/webp" required />
+            <span class="upload-drop-label">Drop an image or click to choose</span>
+            <span class="upload-drop-hint">PNG, JPG or WEBP — up to 15MB</span>
+          </label>
+          <input id="titleInput" type="text" placeholder="Name this banner (e.g. Happy Diwali)" maxlength="120" />
+          <button type="submit" class="btn btn-primary" id="uploadBtn">Upload banner</button>
+          <p class="form-status" id="uploadStatus" role="status"></p>
+        </form>
+
+        <div class="library-list" id="bannerList">
+          <p class="empty-hint">No banners yet — upload one above to get started.</p>
+        </div>
+      </aside>
+
+      <!-- Workspace -->
+      <section class="workspace">
+
+        <div id="emptyWorkspace" class="empty-state">
+          <p>Select a banner from the library to place the name, or upload a new one.</p>
+        </div>
+
+        <div id="positioner" class="positioner" hidden>
+
+          <div class="positioner-head">
+            <h2 id="posBannerTitle">Untitled banner</h2>
+            <div class="positioner-head-actions">
+              <span class="save-status" id="saveStatus"></span>
+              <button class="btn btn-ghost btn-danger" id="deleteBannerBtn" type="button">Delete banner</button>
+              <button class="btn btn-primary" id="savePositionBtn" type="button">Save position</button>
+            </div>
+          </div>
+
+          <div class="positioner-body">
+
+            <div class="canvas-wrap">
+              <div class="canvas-stage" id="canvasStage">
+                <img id="canvasImg" alt="Banner preview" />
+                <div class="guide-box" id="guideBox" aria-hidden="true"></div>
+                <span class="handle-text" id="handleText" aria-hidden="true">Name Here</span>
+                <div class="text-handle" id="textHandle" tabindex="0" role="slider" aria-label="Name position — drag to move"></div>
+              </div>
+              <p class="canvas-hint">Drag the text to position it. Sample name shown — the real name is filled in per link.</p>
+            </div>
+
+            <div class="controls">
+
+              <div class="control-group">
+                <label for="templateInput">Text template</label>
+                <input id="templateInput" type="text" value="{{name}}" maxlength="200" />
+                <p class="control-hint">Use <code>{{name}}</code> where the name should appear — e.g. "Happy Diwali, {{name}}!"</p>
+              </div>
+
+              <div class="control-row">
+                <div class="control-group">
+                  <label for="fontSelect">Font</label>
+                  <select id="fontSelect"></select>
+                </div>
+                <div class="control-group">
+                  <label>Alignment</label>
+                  <div class="segmented" id="alignSegmented">
+                    <button type="button" data-align="start">Left</button>
+                    <button type="button" data-align="middle" class="is-active">Center</button>
+                    <button type="button" data-align="end">Right</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="control-row">
+                <div class="control-group">
+                  <label for="fontSizeRange">Font size <span class="control-value" id="fontSizeValue">6%</span></label>
+                  <input id="fontSizeRange" type="range" min="1" max="30" step="0.5" value="6" />
+                </div>
+                <div class="control-group">
+                  <label for="maxWidthRange">Max width <span class="control-value" id="maxWidthValue">80%</span></label>
+                  <input id="maxWidthRange" type="range" min="10" max="100" step="1" value="80" />
+                </div>
+              </div>
+
+              <div class="control-row">
+                <div class="control-group">
+                  <label for="colorInput">Text color</label>
+                  <input id="colorInput" type="color" value="#ffffff" />
+                </div>
+                <div class="control-group">
+                  <label class="checkbox-label">
+                    <input id="strokeEnabled" type="checkbox" checked />
+                    Outline
+                  </label>
+                  <input id="strokeColorInput" type="color" value="#000000" />
+                </div>
+              </div>
+
+              <div class="control-row">
+                <div class="control-group">
+                  <label for="strokeWidthRange">Outline width <span class="control-value" id="strokeWidthValue">6%</span></label>
+                  <input id="strokeWidthRange" type="range" min="0" max="25" step="1" value="6" />
+                </div>
+                <div class="control-group">
+                  <label class="checkbox-label">
+                    <input id="shadowEnabled" type="checkbox" />
+                    Drop shadow
+                  </label>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Generate link -->
+          <div class="generate-card">
+            <h3>Generate a link</h3>
+            <p class="control-hint" id="generateHint">Save the position above, then enter a name to create a shareable link.</p>
+            <div class="generate-row">
+              <input id="nameInput" type="text" placeholder="Recipient name, e.g. Kamlesh" maxlength="60" disabled />
+              <button class="btn btn-primary" id="generateBtn" type="button" disabled>Generate link</button>
+            </div>
+            <div class="generate-result" id="generateResult" hidden>
+              <input id="generatedUrl" type="text" readonly />
+              <button class="btn btn-ghost" id="copyUrlBtn" type="button">Copy</button>
+              <a class="btn btn-ghost" id="openUrlBtn" href="#" target="_blank" rel="noopener">Open</a>
+            </div>
+            <img id="generatedPreviewImg" class="generate-preview-img" hidden alt="Rendered banner preview" />
+          </div>
+
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- ===================== LINKS TAB ===================== -->
+  <section id="tab-links" class="tab-panel">
+    <div class="links-head">
+      <h2>Generated links</h2>
+      <button class="btn btn-ghost" id="refreshLinksBtn" type="button">Refresh</button>
+    </div>
+    <div class="table-wrap">
+      <table class="links-table" id="linksTable">
+        <thead>
+          <tr>
+            <th>Banner</th>
+            <th>Name</th>
+            <th>Created</th>
+            <th>Link</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="linksTbody">
+          <tr><td colspan="5" class="empty-hint">No links generated yet.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="/admin.js"></script>
+</body>
+</html>

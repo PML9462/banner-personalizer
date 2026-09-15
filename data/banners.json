@@ -1,0 +1,48 @@
+[
+  {
+    "id": "645dc8a8bb7ec732",
+    "filename": "645dc8a8bb7ec732.png",
+    "filePath": "/home/kamlesh/banner-personalizer (2)/banner-personalizer/uploads/banners/645dc8a8bb7ec732.png",
+    "ext": "png",
+    "originalName": "Happ Diwali",
+    "width": 873,
+    "height": 498,
+    "uploadedAt": "2026-09-11T11:03:04.832Z",
+    "config": {
+      "xPercent": 50,
+      "yPercent": 85,
+      "align": "end",
+      "fontKey": "poppins-bold",
+      "fontSizePercent": 6,
+      "maxWidthPercent": 80,
+      "color": "#935c5c",
+      "strokeColor": "#000000",
+      "strokeWidthPercent": 8,
+      "shadow": false,
+      "template": "{{name}}"
+    }
+  },
+  {
+    "id": "264d4034e747423e",
+    "filename": "264d4034e747423e.png",
+    "filePath": "/home/kamlesh/banner-personalizer (2)/banner-personalizer/uploads/banners/264d4034e747423e.png",
+    "ext": "png",
+    "originalName": "Happ Diwali",
+    "width": 873,
+    "height": 498,
+    "uploadedAt": "2026-09-11T10:17:04.569Z",
+    "config": {
+      "xPercent": 50,
+      "yPercent": 85,
+      "align": "middle",
+      "fontKey": "poppins-bold",
+      "fontSizePercent": 6,
+      "maxWidthPercent": 80,
+      "color": "#ffffff",
+      "strokeColor": "#000000",
+      "strokeWidthPercent": 6,
+      "shadow": false,
+      "template": "{{name}}"
+    }
+  }
+]

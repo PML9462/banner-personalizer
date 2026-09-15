@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>A banner for you</title>
+<meta name="robots" content="noindex" />
+<link rel="icon" href="/favicon.png" type="image/png" />
+<link rel="stylesheet" href="/view.css" />
+</head>
+<body>
+
+<div id="celebration" class="celebration" aria-hidden="true"></div>
+
+<main class="wrap">
+  <div id="loadingState" class="state">
+    <div class="spinner" aria-hidden="true"></div>
+    <p>Loading your banner…</p>
+  </div>
+
+  <div id="errorState" class="state" hidden>
+    <p id="errorMessage">This link doesn't exist or has expired.</p>
+  </div>
+
+  <figure id="cardFigure" class="card" hidden>
+    <img id="cardImg" alt="Personalized banner" />
+  </figure>
+
+  <div id="cardActions" class="actions" hidden>
+    <a id="downloadBtn" class="btn" download>Download image</a>
+  </div>
+</main>
+
+<script src="/view.js"></script>
+</body>
+</html>
