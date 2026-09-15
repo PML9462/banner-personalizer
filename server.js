@@ -33,7 +33,7 @@ const linksRouter = require("./routes/links");
 const { listFonts } = require("./utils/fonts");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3003;
 
 app.use(cors());
 
