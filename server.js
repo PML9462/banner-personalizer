@@ -33,11 +33,11 @@ const linksRouter = require("./routes/links");
 const { listFonts } = require("./utils/fonts");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3003;
 
 // Required behind a reverse proxy (Nginx, Cloudflare, etc.) — without this,
 // req.protocol/req.get("host") reflect the internal connection to Node
-// (e.g. "http://localhost:3000") instead of the real public URL, so
+// (e.g. "http://localhost:3003") instead of the real public URL, so
 // generated links and rendered-image URLs come out wrong.
 app.set("trust proxy", 1);
 
