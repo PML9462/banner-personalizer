@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Personalize your banner</title>
+<meta name="robots" content="noindex" />
+<link rel="icon" href="/favicon.png" type="image/png" />
+<link rel="stylesheet" href="/customer.css" />
+<link rel="stylesheet" href="/celebration.css" />
+</head>
+<body>
+
+<div id="celebration" class="celebration" aria-hidden="true"></div>
+
+<main class="wrap">
+  <div id="loadingState" class="state">
+    <div class="spinner" aria-hidden="true"></div>
+    <p>Loading banner…</p>
+  </div>
+
+  <div id="errorState" class="state" hidden>
+    <p id="errorMessage">This banner link isn't available.</p>
+  </div>
+
+  <div id="content" class="content" hidden>
+    <figure class="card">
+      <img id="cardImg" alt="Banner preview" />
+    </figure>
+
+    <form id="nameForm" class="name-form">
+      <label for="nameInput">Enter your name</label>
+      <div class="name-form-row">
+        <input id="nameInput" type="text" placeholder="e.g. Kamlesh" maxlength="60" autocomplete="name" />
+        <button type="submit" class="btn btn-primary" id="generateBtn">Generate my banner</button>
+      </div>
+    </form>
+
+    <p class="hint" id="hint">Type your name above and we'll add it to the banner.</p>
+
+    <div class="actions" id="cardActions" hidden>
+      <a id="downloadBtn" class="btn" download>Download image</a>
+      <button class="btn" id="copyLinkBtn" type="button">Copy my link</button>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="/customer.js"></script>
+<script src="/celebration.js"></script>
+</body>
+</html>

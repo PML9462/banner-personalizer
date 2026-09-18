@@ -8,13 +8,45 @@ const RENDERED_DIR = path.join(__dirname, "..", "uploads", "rendered");
 fs.mkdirSync(RENDERED_DIR, { recursive: true });
 
 // Cache opened fontkit font objects so we don't re-parse the .ttf file
-// on every single render request.
+// on every single render request. Keyed by "filePath" for the base font,
+// and "filePath@weight" for a specific variable-font instance.
 const fontCache = new Map();
 function loadFontkitFont(filePath) {
   if (!fontCache.has(filePath)) {
     fontCache.set(filePath, fontkit.openSync(filePath));
   }
   return fontCache.get(filePath);
+}
+
+function numericWeight(weight) {
+  if (weight === "bold") return 700;
+  if (weight === "normal") return 400;
+  const n = parseInt(weight, 10);
+  return Number.isFinite(n) ? n : 400;
+}
+
+// Several bundled fonts (Montserrat, Quicksand, Caveat, Cormorant Garamond,
+// Merriweather) are variable fonts: one file covering a weight range. The
+// default fontkit instance measures at the font's default weight (usually
+// ~400), but we render at whatever weight the font entry specifies (often
+// bold/600/700) - bold glyphs are measurably wider, so measuring the wrong
+// instance would under-shrink long names and let them overflow slightly.
+// This gets the correctly-weighted instance for accurate measurement.
+function loadWeightedFont(filePath, weight) {
+  const base = loadFontkitFont(filePath);
+  const axes = base.variationAxes;
+  if (!axes || !axes.wght || typeof base.getVariation !== "function") {
+    return base;
+  }
+  const cacheKey = `${filePath}@${weight}`;
+  if (!fontCache.has(cacheKey)) {
+    try {
+      fontCache.set(cacheKey, base.getVariation({ wght: weight }));
+    } catch {
+      fontCache.set(cacheKey, base); // fall back to default instance
+    }
+  }
+  return fontCache.get(cacheKey);
 }
 
 function escapeXml(str) {
@@ -27,11 +59,11 @@ function escapeXml(str) {
 }
 
 // Measures how wide `text` would render at `fontSizePx` using the actual
-// font file, so we can shrink long names to fit instead of letting them
-// overflow the banner.
-function measureTextWidthPx(text, fontFilePath, fontSizePx) {
+// font file (and correct weight instance for variable fonts), so we can
+// shrink long names to fit instead of letting them overflow the banner.
+function measureTextWidthPx(text, fontFilePath, fontSizePx, weight = "normal") {
   try {
-    const font = loadFontkitFont(fontFilePath);
+    const font = loadWeightedFont(fontFilePath, numericWeight(weight));
     const run = font.layout(text);
     return (run.advanceWidth / font.unitsPerEm) * fontSizePx;
   } catch (err) {
@@ -73,7 +105,7 @@ async function renderBanner(banner, name, linkId) {
   let fontSizePx = Math.max(6, basePx(cfg.fontSizePercent ?? 6));
   const maxWidthPx = Math.max(10, basePx(cfg.maxWidthPercent ?? 80));
 
-  const measured = measureTextWidthPx(text, fontDef.file, fontSizePx);
+  const measured = measureTextWidthPx(text, fontDef.file, fontSizePx, fontDef.weight);
   if (measured > maxWidthPx) {
     const scale = maxWidthPx / measured;
     fontSizePx = Math.max(8, fontSizePx * scale);
@@ -89,6 +121,16 @@ async function renderBanner(banner, name, linkId) {
     ? cfg.align
     : "middle";
 
+  // xPercent marks the CENTER of a fixed-width text box (width =
+  // maxWidthPercent) that stays put regardless of alignment. Alignment
+  // only controls where the text sits *inside* that unmoving box (its
+  // left edge, center, or right edge) - not a flip to the opposite side
+  // of the canvas. Where the text is dragged to is where it visually
+  // stays; toggling Left/Center/Right just nudges it within that spot.
+  let textX = xPx;
+  if (anchor === "start") textX = xPx - maxWidthPx / 2;
+  else if (anchor === "end") textX = xPx + maxWidthPx / 2;
+
   const shadowFilter = cfg.shadow
     ? `<filter id="textShadow" x="-50%" y="-50%" width="200%" height="200%">
          <feDropShadow dx="0" dy="${Math.max(1, fontSizePx * 0.04)}" stdDeviation="${Math.max(1, fontSizePx * 0.05)}" flood-color="#000000" flood-opacity="0.45"/>
@@ -96,7 +138,7 @@ async function renderBanner(banner, name, linkId) {
     : "";
 
   const textAttrs = [
-    `x="${xPx.toFixed(2)}"`,
+    `x="${textX.toFixed(2)}"`,
     `y="${yPx.toFixed(2)}"`,
     `text-anchor="${anchor}"`,
     `dominant-baseline="middle"`,
@@ -142,10 +184,28 @@ function clearRenderedCache(linkId) {
   }
 }
 
+// Customer-portal previews are cached by a name-derived key (see
+// routes/banners.js) rather than a link id, since there's no persistent
+// "link" record per customer. When a banner's position/style changes,
+// every previously-cached preview for it is now stale and needs clearing.
+function clearPreviewCache(bannerId) {
+  const prefix = `preview_${bannerId}_`;
+  let files;
+  try {
+    files = fs.readdirSync(RENDERED_DIR);
+  } catch {
+    return;
+  }
+  for (const f of files) {
+    if (f.startsWith(prefix)) fs.unlinkSync(path.join(RENDERED_DIR, f));
+  }
+}
+
 module.exports = {
   renderBanner,
   renderedFilePath,
   clearRenderedCache,
+  clearPreviewCache,
   applyTemplate,
   measureTextWidthPx,
 };

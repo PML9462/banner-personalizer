@@ -7,7 +7,7 @@
 <link rel="icon" href="/favicon.png" type="image/png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Playfair+Display:wght@700&family=Lora:wght@700&family=Dancing+Script:wght@600&family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Playfair+Display:wght@700&family=Lora:wght@700&family=Dancing+Script:wght@600&family=Pacifico&family=Great+Vibes&family=Sacramento&family=Caveat:wght@700&family=Bebas+Neue&family=Montserrat:wght@700&family=Quicksand:wght@700&family=Cormorant+Garamond:wght@600&family=Merriweather:wght@700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/admin.css" />
 </head>
 <body>
@@ -17,20 +17,14 @@
     <span class="brand-mark" aria-hidden="true"></span>
     <div>
       <h1>Banner Studio</h1>
-      <p>Upload a banner, place the name, share the link.</p>
+      <p>Upload a banner, place the name, share one link with your customers.</p>
     </div>
   </div>
-  <nav class="tabs" role="tablist">
-    <button class="tab-btn is-active" data-tab="banners" role="tab" aria-selected="true">Banners</button>
-    <button class="tab-btn" data-tab="links" role="tab" aria-selected="false">Generated links</button>
-  </nav>
 </header>
 
 <main>
 
-  <!-- ===================== BANNERS TAB ===================== -->
-  <section id="tab-banners" class="tab-panel is-active">
-    <div class="layout">
+  <div class="layout">
 
       <!-- Library sidebar -->
       <aside class="library">
@@ -81,7 +75,7 @@
                 <span class="handle-text" id="handleText" aria-hidden="true">Name Here</span>
                 <div class="text-handle" id="textHandle" tabindex="0" role="slider" aria-label="Name position — drag to move"></div>
               </div>
-              <p class="canvas-hint">Drag the text to position it. Sample name shown — the real name is filled in per link.</p>
+              <p class="canvas-hint">Drag the text to position it. Sample name shown — each customer fills in their own name on the customer page.</p>
             </div>
 
             <div class="controls">
@@ -148,50 +142,21 @@
             </div>
           </div>
 
-          <!-- Generate link -->
+          <!-- Customer link -->
           <div class="generate-card">
-            <h3>Generate a link</h3>
-            <p class="control-hint" id="generateHint">Save the position above, then enter a name to create a shareable link.</p>
-            <div class="generate-row">
-              <input id="nameInput" type="text" placeholder="Recipient name, e.g. Kamlesh" maxlength="60" disabled />
-              <button class="btn btn-primary" id="generateBtn" type="button" disabled>Generate link</button>
+            <h3>Customer link</h3>
+            <p class="control-hint" id="customerLinkHint">Save the position above to activate the customer link.</p>
+            <div class="generate-result" id="customerLinkResult" hidden>
+              <input id="customerLinkUrl" type="text" readonly />
+              <button class="btn btn-ghost" id="copyCustomerLinkBtn" type="button">Copy</button>
+              <a class="btn btn-ghost" id="openCustomerLinkBtn" href="#" target="_blank" rel="noopener">Open</a>
             </div>
-            <div class="generate-result" id="generateResult" hidden>
-              <input id="generatedUrl" type="text" readonly />
-              <button class="btn btn-ghost" id="copyUrlBtn" type="button">Copy</button>
-              <a class="btn btn-ghost" id="openUrlBtn" href="#" target="_blank" rel="noopener">Open</a>
-            </div>
-            <img id="generatedPreviewImg" class="generate-preview-img" hidden alt="Rendered banner preview" />
+            <p class="control-hint" id="customerLinkNote" hidden>Share this one link with as many customers as you like — each person enters their own name on that page and gets their own personalized banner.</p>
           </div>
 
         </div>
       </section>
     </div>
-  </section>
-
-  <!-- ===================== LINKS TAB ===================== -->
-  <section id="tab-links" class="tab-panel">
-    <div class="links-head">
-      <h2>Generated links</h2>
-      <button class="btn btn-ghost" id="refreshLinksBtn" type="button">Refresh</button>
-    </div>
-    <div class="table-wrap">
-      <table class="links-table" id="linksTable">
-        <thead>
-          <tr>
-            <th>Banner</th>
-            <th>Name</th>
-            <th>Created</th>
-            <th>Link</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="linksTbody">
-          <tr><td colspan="5" class="empty-hint">No links generated yet.</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
 
 </main>
 

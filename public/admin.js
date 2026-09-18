@@ -11,6 +11,14 @@
     "lora-bold": { family: "'Lora', serif", weight: 700, style: "normal" },
     "dancing-script": { family: "'Dancing Script', cursive", weight: 600, style: "normal" },
     pacifico: { family: "'Pacifico', cursive", weight: 400, style: "normal" },
+    "great-vibes": { family: "'Great Vibes', cursive", weight: 400, style: "normal" },
+    sacramento: { family: "'Sacramento', cursive", weight: 400, style: "normal" },
+    "caveat-bold": { family: "'Caveat', cursive", weight: 700, style: "normal" },
+    "bebas-neue": { family: "'Bebas Neue', sans-serif", weight: 400, style: "normal" },
+    "montserrat-bold": { family: "'Montserrat', sans-serif", weight: 700, style: "normal" },
+    "quicksand-bold": { family: "'Quicksand', sans-serif", weight: 700, style: "normal" },
+    "cormorant-semibold": { family: "'Cormorant Garamond', serif", weight: 600, style: "normal" },
+    "merriweather-bold": { family: "'Merriweather', serif", weight: 700, style: "normal" },
   };
 
   const DEFAULT_CONFIG = {
@@ -71,17 +79,12 @@
     strokeWidthValue: $("strokeWidthValue"),
     shadowEnabled: $("shadowEnabled"),
 
-    generateHint: $("generateHint"),
-    nameInput: $("nameInput"),
-    generateBtn: $("generateBtn"),
-    generateResult: $("generateResult"),
-    generatedUrl: $("generatedUrl"),
-    copyUrlBtn: $("copyUrlBtn"),
-    openUrlBtn: $("openUrlBtn"),
-    generatedPreviewImg: $("generatedPreviewImg"),
-
-    refreshLinksBtn: $("refreshLinksBtn"),
-    linksTbody: $("linksTbody"),
+    customerLinkHint: $("customerLinkHint"),
+    customerLinkResult: $("customerLinkResult"),
+    customerLinkUrl: $("customerLinkUrl"),
+    copyCustomerLinkBtn: $("copyCustomerLinkBtn"),
+    openCustomerLinkBtn: $("openCustomerLinkBtn"),
+    customerLinkNote: $("customerLinkNote"),
 
     toast: $("toast"),
   };
@@ -94,23 +97,6 @@
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => els.toast.classList.remove("is-visible"), 2400);
   }
-
-  // ---------- Tabs ----------
-  document.querySelectorAll(".tab-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".tab-btn").forEach((b) => {
-        b.classList.remove("is-active");
-        b.setAttribute("aria-selected", "false");
-      });
-      btn.classList.add("is-active");
-      btn.setAttribute("aria-selected", "true");
-
-      document.querySelectorAll(".tab-panel").forEach((p) => p.classList.remove("is-active"));
-      $(`tab-${btn.dataset.tab}`).classList.add("is-active");
-
-      if (btn.dataset.tab === "links") loadLinks();
-    });
-  });
 
   // ---------- API helpers ----------
   async function api(path, options = {}) {
@@ -221,18 +207,23 @@
 
     setStatus(els.saveStatus, "", null);
 
+    updateCustomerLink(banner);
+  }
+
+  function updateCustomerLink(banner) {
     if (banner.config) {
-      els.nameInput.disabled = false;
-      els.generateBtn.disabled = false;
-      els.generateHint.textContent = "Enter a name and generate a shareable link.";
+      const url = `${window.location.origin}/customer/${banner.id}`;
+      els.customerLinkUrl.value = url;
+      els.customerLinkResult.hidden = false;
+      els.customerLinkNote.hidden = false;
+      els.customerLinkHint.hidden = true;
+      els.openCustomerLinkBtn.href = url;
     } else {
-      els.nameInput.disabled = true;
-      els.generateBtn.disabled = true;
-      els.generateHint.textContent = "Save the position above, then enter a name to create a shareable link.";
+      els.customerLinkResult.hidden = true;
+      els.customerLinkNote.hidden = true;
+      els.customerLinkHint.hidden = false;
+      els.customerLinkHint.textContent = "Save the position above to activate the customer link.";
     }
-    els.generateResult.hidden = true;
-    els.generatedPreviewImg.hidden = true;
-    els.nameInput.value = "";
   }
 
   function applyConfigToControls() {
@@ -275,8 +266,18 @@
     const sampleName = "Your Name";
     const text = (workingConfig.template || "{{name}}").replace(/\{\{\s*name\s*\}\}/gi, sampleName);
 
+    // xPercent marks the CENTER of a fixed-width box (width =
+    // maxWidthPercent) that stays put regardless of alignment — matches
+    // utils/render.js exactly, so this preview matches the real output.
+    // Alignment only decides where text sits *inside* that unmoving box,
+    // rather than flipping the text to the opposite side of the canvas.
+    const maxWidthPx = (workingConfig.maxWidthPercent / 100) * stageW;
+    let textX = xPx;
+    if (workingConfig.align === "start") textX = xPx - maxWidthPx / 2;
+    else if (workingConfig.align === "end") textX = xPx + maxWidthPx / 2;
+
     els.handleText.textContent = text;
-    els.handleText.style.left = `${xPx}px`;
+    els.handleText.style.left = `${textX}px`;
     els.handleText.style.top = `${yPx}px`;
     els.handleText.style.fontFamily = fontDef.family;
     els.handleText.style.fontWeight = fontDef.weight;
@@ -290,13 +291,11 @@
     els.handleText.style.transform = `translate(${xOffset}, -50%)`;
     els.handleText.style.textAlign = workingConfig.align === "start" ? "left" : workingConfig.align === "end" ? "right" : "center";
 
-    // Guide box = the max-width wrap boundary
-    const maxWidthPx = (workingConfig.maxWidthPercent / 100) * stageW;
+    // Guide box = the max-width wrap boundary. Always centered on the drag
+    // anchor (xPx) now, regardless of alignment, since the box itself no
+    // longer moves when alignment changes — only the text within it does.
     const boxHeight = fontSizePx * 1.6;
-    let boxLeft;
-    if (workingConfig.align === "start") boxLeft = xPx;
-    else if (workingConfig.align === "end") boxLeft = xPx - maxWidthPx;
-    else boxLeft = xPx - maxWidthPx / 2;
+    const boxLeft = xPx - maxWidthPx / 2;
 
     els.guideBox.style.left = `${boxLeft}px`;
     els.guideBox.style.top = `${yPx - boxHeight / 2}px`;
@@ -431,9 +430,7 @@
       if (idx !== -1) banners[idx] = updated;
       renderBannerList();
       setStatus(els.saveStatus, "Saved", "ok");
-      els.nameInput.disabled = false;
-      els.generateBtn.disabled = false;
-      els.generateHint.textContent = "Enter a name and generate a shareable link.";
+      updateCustomerLink(updated);
       showToast("Position saved");
     } catch (err) {
       setStatus(els.saveStatus, err.message, "error");
@@ -458,93 +455,21 @@
     }
   });
 
-  // ---------- Generate link ----------
-  els.generateBtn.addEventListener("click", async () => {
-    const name = els.nameInput.value.trim();
-    if (!name || !selectedBannerId) return;
-    els.generateBtn.disabled = true;
+  // ---------- Customer link actions ----------
+  els.copyCustomerLinkBtn.addEventListener("click", async () => {
     try {
-      const link = await api("/api/links", {
-        method: "POST",
-        body: JSON.stringify({ bannerId: selectedBannerId, name }),
-      });
-      els.generatedUrl.value = link.url;
-      els.generateResult.hidden = false;
-      els.generatedPreviewImg.src = `${link.renderUrl}?t=${Date.now()}`;
-      els.generatedPreviewImg.hidden = false;
-      showToast("Link generated");
-    } catch (err) {
-      showToast(err.message);
-    } finally {
-      els.generateBtn.disabled = false;
-    }
-  });
-
-  els.nameInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") els.generateBtn.click();
-  });
-
-  els.copyUrlBtn.addEventListener("click", async () => {
-    try {
-      await navigator.clipboard.writeText(els.generatedUrl.value);
+      await navigator.clipboard.writeText(els.customerLinkUrl.value);
       showToast("Link copied");
     } catch {
-      els.generatedUrl.select();
+      els.customerLinkUrl.select();
       document.execCommand("copy");
       showToast("Link copied");
     }
   });
 
-  els.openUrlBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    if (els.generatedUrl.value) window.open(els.generatedUrl.value, "_blank", "noopener");
+  els.openCustomerLinkBtn.addEventListener("click", (e) => {
+    if (!els.customerLinkUrl.value) e.preventDefault();
   });
-
-  // ---------- Links tab ----------
-  async function loadLinks() {
-    els.linksTbody.innerHTML = `<tr><td colspan="5" class="empty-hint">Loading…</td></tr>`;
-    try {
-      const links = await api("/api/links");
-      if (!links.length) {
-        els.linksTbody.innerHTML = `<tr><td colspan="5" class="empty-hint">No links generated yet.</td></tr>`;
-        return;
-      }
-      els.linksTbody.innerHTML = "";
-      links.forEach((l) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>
-            <div class="link-banner-cell">
-              ${l.bannerThumb ? `<img src="${l.bannerThumb}" alt="" />` : ""}
-              <span>${escapeHtml(l.bannerTitle)}</span>
-            </div>
-          </td>
-          <td>${escapeHtml(l.name)}</td>
-          <td>${new Date(l.createdAt).toLocaleString()}</td>
-          <td>
-            <div class="link-url-cell">
-              <input type="text" readonly value="${l.url}" />
-            </div>
-          </td>
-          <td>
-            <div class="row-actions">
-              <a class="btn btn-ghost" href="${l.url}" target="_blank" rel="noopener">Open</a>
-              <button class="btn btn-ghost btn-danger" data-id="${l.id}" type="button">Delete</button>
-            </div>
-          </td>`;
-        tr.querySelector("button[data-id]").addEventListener("click", async (e) => {
-          if (!confirm(`Delete the link for "${l.name}"?`)) return;
-          await api(`/api/links/${l.id}`, { method: "DELETE" });
-          loadLinks();
-        });
-        els.linksTbody.appendChild(tr);
-      });
-    } catch (err) {
-      els.linksTbody.innerHTML = `<tr><td colspan="5" class="empty-hint">${escapeHtml(err.message)}</td></tr>`;
-    }
-  }
-
-  els.refreshLinksBtn.addEventListener("click", loadLinks);
 
   // ---------- Init ----------
   async function init() {

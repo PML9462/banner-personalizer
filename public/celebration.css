@@ -1,0 +1,88 @@
+/* ================= Celebration: falling flowers + butterflies =================
+   Shared by view.html (legacy per-name link page) and customer.html
+   (customer portal). Requires a <div id="celebration"> in the page and
+   celebration.js to populate it. */
+
+.celebration {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.petal-fall {
+  position: absolute;
+  top: -12%;
+  animation-name: petal-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+@keyframes petal-fall {
+  from { transform: translateY(-15vh); }
+  to   { transform: translateY(115vh); }
+}
+
+.petal-sway {
+  animation-name: petal-sway;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+@keyframes petal-sway {
+  from { transform: translateX(-22px); }
+  to   { transform: translateX(22px); }
+}
+
+.petal-spin {
+  animation-name: petal-spin;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  display: block;
+}
+
+@keyframes petal-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.petal-fall svg { display: block; filter: drop-shadow(0 2px 3px rgba(28,23,18,0.12)); }
+
+.butterfly {
+  position: absolute;
+  left: -60px;
+  animation-name: butterfly-fly;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+@keyframes butterfly-fly {
+  0%   { transform: translate(0, 0) rotate(-4deg); }
+  20%  { transform: translate(24vw, -7vh) rotate(6deg); }
+  40%  { transform: translate(48vw, 4vh) rotate(-6deg); }
+  60%  { transform: translate(72vw, -9vh) rotate(6deg); }
+  80%  { transform: translate(96vw, 3vh) rotate(-5deg); }
+  100% { transform: translate(122vw, -3vh) rotate(-4deg); }
+}
+
+.butterfly .wing {
+  animation-name: wing-flap;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes wing-flap {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0.32); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .celebration { display: none; }
+}

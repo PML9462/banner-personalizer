@@ -50,6 +50,62 @@ const FONTS = {
     style: "normal",
     file: path.join(FONT_DIR, "Pacifico-Regular.ttf"),
   },
+  "great-vibes": {
+    label: "Great Vibes (elegant signature script)",
+    family: "Great Vibes",
+    weight: "normal",
+    style: "normal",
+    file: path.join(FONT_DIR, "GreatVibes-Regular.ttf"),
+  },
+  sacramento: {
+    label: "Sacramento (delicate script)",
+    family: "Sacramento",
+    weight: "normal",
+    style: "normal",
+    file: path.join(FONT_DIR, "Sacramento-Regular.ttf"),
+  },
+  "caveat-bold": {
+    label: "Caveat (handwritten, bold)",
+    family: "Caveat",
+    weight: "bold",
+    style: "normal",
+    file: path.join(FONT_DIR, "Caveat.ttf"),
+  },
+  "bebas-neue": {
+    label: "Bebas Neue (tall poster display)",
+    family: "Bebas Neue",
+    weight: "normal",
+    style: "normal",
+    file: path.join(FONT_DIR, "BebasNeue-Regular.ttf"),
+  },
+  "montserrat-bold": {
+    label: "Montserrat Bold (modern geometric)",
+    family: "Montserrat",
+    weight: "bold",
+    style: "normal",
+    file: path.join(FONT_DIR, "Montserrat.ttf"),
+  },
+  "quicksand-bold": {
+    label: "Quicksand Bold (friendly, rounded)",
+    family: "Quicksand",
+    weight: "bold",
+    style: "normal",
+    file: path.join(FONT_DIR, "Quicksand.ttf"),
+  },
+  "cormorant-semibold": {
+    label: "Cormorant Garamond (refined, elegant)",
+    family: "Cormorant Garamond",
+    weight: "600",
+    style: "normal",
+    file: path.join(FONT_DIR, "CormorantGaramond.ttf"),
+  },
+  "merriweather-bold": {
+    label: "Merriweather Bold (readable serif)",
+    family: "Merriweather",
+    weight: "bold",
+    style: "normal",
+    file: path.join(FONT_DIR, "Merriweather.ttf"),
+  },
 };
 
 const DEFAULT_FONT_KEY = "poppins-bold";

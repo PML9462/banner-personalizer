@@ -4,7 +4,7 @@
   "description": "Upload a banner, drag to position a name, generate a personalized shareable link.",
   "main": "server.js",
   "scripts": {
-    "start": "pm2 start ecosystem.config.json --no-daemon",
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -16,7 +16,6 @@
     "fontkit": "^2.0.4",
     "multer": "^2.3.0",
     "nanoid": "^3.3.18",
-    "pm2": "^7.0.4",
     "sharp": "^0.35.4"
   }
 }

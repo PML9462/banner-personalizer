@@ -7,7 +7,7 @@ const crypto = require("crypto");
 const sanitize = require("../utils/sanitize");
 
 const db = require("../utils/db");
-const { clearRenderedCache } = require("../utils/render");
+const { renderBanner, renderedFilePath, clearRenderedCache, clearPreviewCache } = require("../utils/render");
 
 const router = express.Router();
 
@@ -137,10 +137,12 @@ router.put("/:id/config", express.json(), async (req, res) => {
 
   if (!updatedBanner) return res.status(404).json({ error: "Banner not found." });
 
-  // Any links generated against this banner are now stale (position/style
-  // changed) - drop their cached renders so they regenerate on next view.
+  // Any links (legacy) or customer-portal previews generated against this
+  // banner are now stale (position/style changed) - drop their cached
+  // renders so they regenerate on next view.
   const links = db.readJSON("links").filter((l) => l.bannerId === req.params.id);
   links.forEach((l) => clearRenderedCache(l.id));
+  clearPreviewCache(req.params.id);
 
   res.json(toPublicBanner(updatedBanner));
 });
@@ -165,6 +167,7 @@ router.delete("/:id", async (req, res) => {
   const staleLinks = links.filter((l) => l.bannerId === req.params.id);
   staleLinks.forEach((l) => clearRenderedCache(l.id));
   await db.update("links", (list) => list.filter((l) => l.bannerId !== req.params.id));
+  clearPreviewCache(req.params.id);
 
   res.json({ success: true });
 });
@@ -186,4 +189,41 @@ function toPublicBanner(b) {
   };
 }
 
+// --- Customer-portal rendering (mounted separately in server.js at
+// GET /api/banners/:id/render) ---
+// Unlike the legacy per-link renderer, there's no pre-created record here:
+// the customer types a name directly on the /customer/:id page, so the
+// cache key is derived from the name itself (hashed, so odd characters in
+// a name can't affect the filename).
+function previewCacheKey(bannerId, name) {
+  const hash = crypto.createHash("sha1").update(name).digest("hex").slice(0, 16);
+  return `preview_${bannerId}_${hash}`;
+}
+
+async function renderPreviewHandler(req, res) {
+  const banner = db.readJSON("banners").find((b) => b.id === req.params.id);
+  if (!banner) return res.status(404).send("Banner not found.");
+  if (!banner.config) return res.status(400).send("This banner isn't set up yet.");
+
+  const name = sanitize(req.query.name, 60);
+  if (!name) return res.status(400).send("A name is required.");
+
+  try {
+    const ext = banner.ext === "png" ? "png" : "jpg";
+    const cacheKey = previewCacheKey(banner.id, name);
+    const cachedPath = renderedFilePath(cacheKey, ext);
+
+    if (!fs.existsSync(cachedPath)) {
+      await renderBanner(banner, name, cacheKey);
+    }
+
+    res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+    res.sendFile(cachedPath);
+  } catch (err) {
+    console.error("Preview render failed:", err);
+    res.status(500).send("Could not render this banner.");
+  }
+}
+
 module.exports = router;
+module.exports.renderPreviewHandler = renderPreviewHandler;
