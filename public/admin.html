@@ -7,7 +7,7 @@
 <link rel="icon" href="/favicon.png" type="image/png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Playfair+Display:wght@700&family=Lora:wght@700&family=Dancing+Script:wght@600&family=Pacifico&family=Great+Vibes&family=Sacramento&family=Caveat:wght@700&family=Bebas+Neue&family=Montserrat:wght@700&family=Quicksand:wght@700&family=Cormorant+Garamond:wght@600&family=Merriweather:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Roboto:wght@700&family=Open+Sans:wght@700&family=Lato:wght@700&family=Inter:wght@700&family=Nunito:wght@700&family=Raleway:wght@700&family=Work+Sans:wght@700&family=Rubik:wght@700&family=Manrope:wght@700&family=DM+Sans:wght@700&family=Karla:wght@700&family=Mulish:wght@700&family=Barlow:wght@700&family=Source+Sans+3:wght@700&family=Noto+Sans:wght@700&family=Archivo:wght@700&family=Outfit:wght@700&family=Space+Grotesk:wght@700&family=Josefin+Sans:wght@700&family=Questrial:wght@400&family=Exo+2:wght@700&family=Montserrat:wght@700&family=Quicksand:wght@700&family=Playfair+Display:wght@700&family=Lora:wght@700&family=Merriweather:wght@700&family=Cormorant+Garamond:wght@600&family=PT+Serif:wght@700&family=Noto+Serif:wght@700&family=Crimson+Text:wght@700&family=Libre+Baskerville:wght@700&family=EB+Garamond:wght@700&family=Bitter:wght@700&family=Domine:wght@700&family=Vollkorn:wght@700&family=Spectral:wght@700&family=Cardo:wght@700&family=Bebas+Neue:wght@400&family=Anton:wght@400&family=Oswald:wght@700&family=Alfa+Slab+One:wght@400&family=Passion+One:wght@700&family=Fjalla+One:wght@400&family=Righteous:wght@400&family=Bungee:wght@400&family=Abril+Fatface:wght@400&family=Lobster:wght@400&family=Comfortaa:wght@700&family=Baloo+2:wght@700&family=Fredoka:wght@700&family=Dancing+Script:wght@400&family=Pacifico:wght@400&family=Great+Vibes:wght@400&family=Sacramento:wght@400&family=Caveat:wght@700&family=Satisfy:wght@400&family=Kalam:wght@700&family=Shadows+Into+Light:wght@400&family=Indie+Flower:wght@400&family=Amatic+SC:wght@700&family=Permanent+Marker:wght@400&family=Courgette:wght@400&family=Parisienne:wght@400&family=Yellowtail:wght@400&family=Allura:wght@400&family=Tangerine:wght@700&family=Homemade+Apple:wght@400&family=Marck+Script:wght@400&family=Pinyon+Script:wght@400&family=Playball:wght@400&family=Cookie:wght@400&family=Handlee:wght@400&family=Patrick+Hand:wght@400&family=Damion:wght@400&family=Roboto+Mono:wght@700&family=Space+Mono:wght@700&family=JetBrains+Mono:wght@700&family=Courier+Prime:wght@700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/admin.css" />
 </head>
 <body>
@@ -74,6 +74,7 @@
                 <div class="guide-box" id="guideBox" aria-hidden="true"></div>
                 <span class="handle-text" id="handleText" aria-hidden="true">Name Here</span>
                 <div class="text-handle" id="textHandle" tabindex="0" role="slider" aria-label="Name position — drag to move"></div>
+                <img class="logo-handle" id="logoHandle" alt="Logo" hidden tabindex="0" role="slider" aria-label="Logo position — drag to move" />
               </div>
               <p class="canvas-hint">Drag the text to position it. Sample name shown — each customer fills in their own name on the customer page.</p>
             </div>
@@ -138,6 +139,121 @@
                   </label>
                 </div>
               </div>
+
+              <div class="control-section-title">Canvas size</div>
+
+              <div class="control-row">
+                <div class="control-group">
+                  <label for="canvasWidthInput">Width (px)</label>
+                  <input id="canvasWidthInput" type="number" min="100" max="4000" step="1" />
+                </div>
+                <div class="control-group">
+                  <label for="canvasHeightInput">Height (px)</label>
+                  <input id="canvasHeightInput" type="number" min="100" max="4000" step="1" />
+                </div>
+              </div>
+
+              <div class="control-row">
+                <div class="control-group">
+                  <label>Fit mode</label>
+                  <div class="segmented" id="fitSegmented">
+                    <button type="button" data-fit="cover" class="is-active">Cover</button>
+                    <button type="button" data-fit="contain">Contain</button>
+                    <button type="button" data-fit="fill">Stretch</button>
+                  </div>
+                </div>
+                <div class="control-group" id="canvasBackgroundGroup" hidden>
+                  <label for="canvasBackgroundInput">Letterbox color</label>
+                  <input id="canvasBackgroundInput" type="color" value="#000000" />
+                </div>
+              </div>
+
+              <div class="control-row">
+                <button class="btn btn-ghost" id="resetCanvasSizeBtn" type="button">Reset to original size</button>
+              </div>
+
+              <div class="control-section-title">Gradient overlay</div>
+
+              <div class="control-group">
+                <label class="checkbox-label">
+                  <input id="gradientEnabled" type="checkbox" />
+                  Enable gradient overlay
+                </label>
+                <p class="control-hint">Useful for keeping text legible over busy photos.</p>
+              </div>
+
+              <div class="control-row" id="gradientControlsRow" hidden>
+                <div class="control-group">
+                  <label for="gradientDirectionSelect">Direction</label>
+                  <select id="gradientDirectionSelect">
+                    <option value="to-bottom">Top → Bottom</option>
+                    <option value="to-top">Bottom → Top</option>
+                    <option value="to-right">Left → Right</option>
+                    <option value="to-left">Right → Left</option>
+                    <option value="to-bottom-right">Top-left → Bottom-right</option>
+                    <option value="to-bottom-left">Top-right → Bottom-left</option>
+                    <option value="to-top-right">Bottom-left → Top-right</option>
+                    <option value="to-top-left">Bottom-right → Top-left</option>
+                  </select>
+                </div>
+                <div></div>
+              </div>
+
+              <div class="control-row" id="gradientStartRow" hidden>
+                <div class="control-group">
+                  <label for="gradientStartColor">Start color</label>
+                  <input id="gradientStartColor" type="color" value="#000000" />
+                </div>
+                <div class="control-group">
+                  <label for="gradientStartOpacity">Start opacity <span class="control-value" id="gradientStartOpacityValue">0%</span></label>
+                  <input id="gradientStartOpacity" type="range" min="0" max="100" step="1" value="0" />
+                </div>
+              </div>
+
+              <div class="control-row" id="gradientEndRow" hidden>
+                <div class="control-group">
+                  <label for="gradientEndColor">End color</label>
+                  <input id="gradientEndColor" type="color" value="#000000" />
+                </div>
+                <div class="control-group">
+                  <label for="gradientEndOpacity">End opacity <span class="control-value" id="gradientEndOpacityValue">70%</span></label>
+                  <input id="gradientEndOpacity" type="range" min="0" max="100" step="1" value="70" />
+                </div>
+              </div>
+
+              <div class="control-section-title">Logo / sticker</div>
+
+              <div class="control-group" id="logoUploadGroup">
+                <label class="upload-drop upload-drop-small" for="logoFileInput">
+                  <input id="logoFileInput" type="file" accept="image/png,image/jpeg,image/webp" />
+                  <span class="upload-drop-label" id="logoUploadLabel">Upload a logo or sticker</span>
+                </label>
+              </div>
+
+              <div class="control-row" id="logoControlsRow" hidden>
+                <div class="control-group">
+                  <label for="logoWidthRange">Logo size <span class="control-value" id="logoWidthValue">20%</span></label>
+                  <input id="logoWidthRange" type="range" min="2" max="80" step="1" value="20" />
+                </div>
+                <div class="control-group">
+                  <label for="logoOpacityRange">Logo opacity <span class="control-value" id="logoOpacityValue">100%</span></label>
+                  <input id="logoOpacityRange" type="range" min="0" max="100" step="1" value="100" />
+                </div>
+              </div>
+
+              <div class="control-row" id="logoActionsRow" hidden>
+                <div class="control-group">
+                  <label class="checkbox-label">
+                    <input id="logoEnabled" type="checkbox" checked />
+                    Show logo on banner
+                  </label>
+                </div>
+                <div class="control-group logo-actions-cell">
+                  <button class="btn btn-ghost btn-danger" id="removeLogoBtn" type="button">Remove logo</button>
+                </div>
+              </div>
+
+              <p class="control-hint" id="logoDragHint" hidden>Drag the logo directly on the banner preview to reposition it.</p>
 
             </div>
           </div>
